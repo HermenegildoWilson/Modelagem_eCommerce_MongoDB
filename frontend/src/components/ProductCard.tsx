@@ -1,85 +1,182 @@
-import { ShoppingCart, Star } from 'lucide-react'
-import { Link } from 'react-router'
-import { motion } from 'framer-motion'
+import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import { Box, Card, Chip, Stack, Typography } from "@mui/material";
+import { Link } from "react-router";
+import { motion } from "framer-motion";
 
-import type { Product } from '../api/types'
-import { useCartStore } from '../features/cart/store'
-import { formatPrice, productImageFallback } from '../utils/formatters'
-import { Button } from './Button'
+import type { Product } from "../api/types";
+import { useCartStore } from "../features/cart/store";
+import { glassCardSx } from "../theme/sx";
+import { formatPrice, productImageFallback } from "../utils/formatters";
+import { Button } from "./Button";
 
 interface ProductCardProps {
-  product: Product
+  product: Product;
 }
 
+const MotionCard = motion(Card);
+
 export function ProductCard({ product }: ProductCardProps) {
-  const addItem = useCartStore((state) => state.addItem)
-  const image = product.imagem_principal || product.imagens?.[0]?.url || productImageFallback(product.nome)
+  const addItem = useCartStore((state) => state.addItem);
+  const image =
+    product.imagem_principal ||
+    product.imagens?.[0]?.url ||
+    productImageFallback(product.nome);
   //alert(image)
 
   return (
-    <motion.article
+    <MotionCard
       layout
       whileHover={{ y: -4 }}
-      className="glass-card group overflow-hidden rounded-lg"
+      sx={{
+        ...glassCardSx,
+        overflow: "hidden",
+        "&:hover img": { transform: "scale(1.05)" },
+      }}
     >
-      <Link to={`/produto/${product.sku}`} className="block" aria-label={`Ver ${product.nome}`}>
-        <div className="aspect-[4/3] overflow-hidden bg-[#111827]">
-          <img
+      <Box
+        component={Link}
+        to={`/produto/${product.sku}`}
+        sx={{ display: "block" }}
+        aria-label={`Ver ${product.nome}`}
+      >
+        <Box
+          sx={{
+            aspectRatio: "4 / 3",
+            overflow: "hidden",
+            bgcolor: "var(--color-bg-soft)",
+          }}
+        >
+          <Box
+            component="img"
             src={image}
             alt={product.nome}
             loading="lazy"
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            sx={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 500ms ease",
+            }}
             onError={(event) => {
-              event.currentTarget.src = productImageFallback(product.nome)
+              (event.currentTarget as HTMLImageElement).src =
+                productImageFallback(product.nome);
             }}
           />
-        </div>
-      </Link>
+        </Box>
+      </Box>
 
-      <div className="space-y-4 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-normal text-[#06D6A0]">
+      <Stack spacing={2} sx={{ p: 2 }}>
+        <Stack
+          sx={{
+            direction: "row",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+          }}
+          spacing={1.5}
+        >
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                color: "var(--color-accent)",
+              }}
+            >
               {product.categoria}
-            </p>
-            <Link to={`/produto/${product.sku}`}>
-              <h3 className="mt-1 line-clamp-2 min-h-12 text-base font-semibold text-white">
+            </Typography>
+            <Box component={Link} to={`/produto/${product.sku}`}>
+              <Typography
+                component="h3"
+                sx={{
+                  mt: 0.5,
+                  minHeight: 48,
+                  color: "var(--color-text)",
+                  fontSize: "1rem",
+                  fontWeight: 700,
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  overflow: "hidden",
+                }}
+              >
                 {product.nome}
-              </h3>
-            </Link>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
           {product.desconto_percentual ? (
-            <span className="rounded-full bg-[#FF6B6B]/15 px-2 py-1 text-xs font-bold text-[#FFB4B4]">
-              -{product.desconto_percentual}%
-            </span>
+            <Chip
+              label={`-${product.desconto_percentual}%`}
+              size="small"
+              sx={{
+                bgcolor:
+                  "color-mix(in srgb, var(--color-danger) 15%, transparent)",
+                color: "var(--color-danger-soft)",
+                fontSize: "0.75rem",
+                fontWeight: 800,
+              }}
+            />
           ) : null}
-        </div>
+        </Stack>
 
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xl font-bold text-white">{formatPrice(product.preco, product.moeda)}</p>
+        <Stack
+          sx={{
+            direction: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            spacing: 1.5,
+          }}
+        >
+          <Box>
+            <Typography
+              sx={{
+                color: "var(--color-text)",
+                fontSize: "1.25rem",
+                fontWeight: 800,
+              }}
+            >
+              {formatPrice(product.preco, product.moeda)}
+            </Typography>
             {product.preco_original ? (
-              <p className="text-xs text-[#94A3B8] line-through">
+              <Typography
+                sx={{
+                  color: "var(--color-muted)",
+                  fontSize: "0.75rem",
+                  textDecoration: "line-through",
+                }}
+              >
                 {formatPrice(product.preco_original, product.moeda)}
-              </p>
+              </Typography>
             ) : null}
-          </div>
-          <div className="flex items-center gap-1 text-sm text-[#E2E8F0]">
-            <Star className="h-4 w-4 fill-[#FBBF24] text-[#FBBF24]" aria-hidden="true" />
-            {product.avaliacao?.rating_medio?.toFixed(1) ?? '0.0'}
-          </div>
-        </div>
+          </Box>
+          <Stack
+            sx={{
+              direction: "row",
+              alignItems: "center",
+              color: "var(--color-text-soft)",
+              fontSize: "0.875rem",
+            }}
+            spacing={0.5}
+          >
+            <StarRoundedIcon
+              sx={{ fontSize: 18, color: "var(--color-warning)" }}
+              aria-hidden="true"
+            />
+            {product.avaliacao?.rating_medio?.toFixed(1) ?? "0.0"}
+          </Stack>
+        </Stack>
 
         <Button
-          className="w-full"
+          fullWidth
           disabled={!product.em_stock}
           onClick={() => addItem(product)}
           aria-label={`Adicionar ${product.nome} ao carrinho`}
         >
-          <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-          {product.em_stock ? 'Adicionar' : 'Sem stock'}
+          <ShoppingCartRoundedIcon sx={{ fontSize: 18 }} aria-hidden="true" />
+          {product.em_stock ? "Adicionar" : "Sem stock"}
         </Button>
-      </div>
-    </motion.article>
-  )
+      </Stack>
+    </MotionCard>
+  );
 }

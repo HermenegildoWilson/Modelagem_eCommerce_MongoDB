@@ -10,7 +10,23 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-sgbd-ecommerce-secret")
 DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0").split(",")
+
+default_allowed_hosts = [
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+    ".onrender.com",
+]
+
+render_external_hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if render_external_hostname:
+    default_allowed_hosts.append(render_external_hostname)
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("DJANGO_ALLOWED_HOSTS", ",".join(default_allowed_hosts)).split(",")
+    if host.strip()
+]
 
 INSTALLED_APPS = [
     "rest_framework",

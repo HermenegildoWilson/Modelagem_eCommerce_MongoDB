@@ -1,8 +1,9 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import { Loader2 } from 'lucide-react'
-import clsx from 'clsx'
+import MuiButton from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
+import type { ButtonProps as MuiButtonProps } from '@mui/material/Button'
+import type { ReactNode } from 'react'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<MuiButtonProps, 'variant' | 'color'> {
   variant?: 'primary' | 'secondary' | 'ghost'
   isLoading?: boolean
   children: ReactNode
@@ -16,23 +17,55 @@ export function Button({
   disabled,
   ...props
 }: ButtonProps) {
+  const muiVariant = variant === 'primary' ? 'contained' : variant === 'secondary' ? 'outlined' : 'text'
+
   return (
-    <button
-      className={clsx(
-        'focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition duration-300',
-        variant === 'primary' &&
-          'bg-[#5B5EFF] text-white shadow-lg shadow-[#5B5EFF]/25 hover:scale-[1.02] hover:bg-[#6B6EFF]',
-        variant === 'secondary' &&
-          'border border-[#334155] bg-[#1E293B]/70 text-[#E2E8F0] hover:border-[#06D6A0] hover:text-white',
-        variant === 'ghost' && 'text-[#E2E8F0] hover:bg-white/10',
-        disabled && 'opacity-60',
-        className,
-      )}
+    <MuiButton
+      variant={muiVariant}
+      className={className}
       disabled={disabled || isLoading}
+      sx={{
+        gap: 1,
+        px: 2,
+        py: 1.25,
+        fontSize: '0.875rem',
+        transition: 'transform 300ms ease, background-color 300ms ease, border-color 300ms ease, color 300ms ease',
+        ...(variant === 'primary' && {
+          bgcolor: 'var(--color-primary)',
+          color: '#fff',
+          boxShadow: '0 10px 28px color-mix(in srgb, var(--color-primary) 28%, transparent)',
+          '&:hover': {
+            bgcolor: 'var(--color-primary-hover)',
+            transform: 'scale(1.02)',
+          },
+        }),
+        ...(variant === 'secondary' && {
+          borderColor: 'var(--color-border-strong)',
+          bgcolor: 'var(--color-surface-solid)',
+          color: 'var(--color-text-soft)',
+          '&:hover': {
+            borderColor: 'var(--color-accent)',
+            bgcolor: 'var(--color-surface-solid)',
+            color: 'var(--color-text)',
+          },
+        }),
+        ...(variant === 'ghost' && {
+          color: 'var(--color-text-soft)',
+          '&:hover': {
+            bgcolor: 'var(--color-surface-muted)',
+          },
+        }),
+        '&.Mui-disabled': {
+          opacity: 0.6,
+          color: variant === 'primary' ? '#fff' : 'var(--color-muted)',
+        },
+      }}
       {...props}
     >
-      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+      {isLoading ? (
+        <CircularProgress size={16} sx={{ color: 'currentColor' }} aria-hidden="true" />
+      ) : null}
       {children}
-    </button>
+    </MuiButton>
   )
 }

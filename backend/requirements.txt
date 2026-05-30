@@ -3,3 +3,4 @@ python-dotenv==1.0.0
 faker==23.2.0
 Django==6.0.5
 djangorestframework==3.17.1
+gunicorn==23.0.0

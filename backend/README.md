@@ -40,6 +40,22 @@ MONGODB_COLLECTION=produtos
 python manage.py runserver
 ```
 
+### Produção no Render
+
+Use o comando de start abaixo para o serviço web:
+
+```bash
+./start.sh
+```
+
+Ou configure diretamente:
+
+```bash
+gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+```
+
+O Render injeta a variável `PORT`; por isso a API precisa escutar em `0.0.0.0:$PORT`, não apenas em `localhost`.
+
 ### Endpoints
 
 - `GET /api/` - lista os endpoints disponíveis.

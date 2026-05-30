@@ -1,4 +1,19 @@
-import { Menu, Search, ShoppingCart, Store, X } from 'lucide-react'
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
+import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
+import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
+import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded'
+import {
+  AppBar,
+  Badge,
+  Box,
+  Container,
+  IconButton,
+  InputBase,
+  Stack,
+  Toolbar,
+} from '@mui/material'
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from "react-router";
@@ -6,6 +21,7 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import { CartDrawer } from '../components/CartDrawer'
 import { useCartStore, useCartTotals } from '../features/cart/store'
 import { Button } from '../components/Button'
+import { useAppThemeMode } from '../theme/AppThemeProvider'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -19,6 +35,8 @@ export function Layout() {
   const navigate = useNavigate()
   const openCart = useCartStore((state) => state.open)
   const { count } = useCartTotals()
+  const { mode, toggleMode } = useAppThemeMode()
+  const logoSrc = mode === 'dark' ? '/images/logo-dark.png' : '/images/logo-light.png'
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -27,88 +45,240 @@ export function Layout() {
   }
 
   return (
-    <div className="min-h-dvh text-[#E2E8F0]">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0F172A]/86 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link to="/" className="focus-ring flex items-center gap-2 rounded-lg text-white">
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#5B5EFF]">
-              <Store className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <span className="text-lg font-bold">eCommerce</span>
-          </Link>
+    <Box sx={{ minHeight: '100dvh', color: 'var(--color-text-soft)' }}>
+      <AppBar
+        position="sticky"
+        elevation={0}
+        sx={{
+          zIndex: 30,
+          borderBottom: '1px solid var(--color-border)',
+          bgcolor: 'var(--color-surface)',
+          backdropFilter: 'blur(18px)',
+          color: 'var(--color-text)',
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar disableGutters sx={{ minHeight: 64, gap: { xs: 1, sm: 1.5 }, py: 1.5 }}>
+            <Box
+              component={Link}
+              to="/"
+              aria-label="Coreon Marketplace"
+              sx={{
+                display: 'flex',
+                flexShrink: 0,
+                alignItems: 'center',
+                width: { xs: 132, sm: 172 },
+                height: { xs: 42, sm: 48 },
+                overflow: 'hidden',
+                borderRadius: 1,
+                outline: '2px solid transparent',
+                outlineOffset: 2,
+                '&:focus-visible': { outlineColor: 'var(--color-accent)' },
+              }}
+            >
+              <Box
+                component="img"
+                src={logoSrc}
+                alt="Coreon Marketplace"
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  borderRadius: 1,
+                }}
+              />
+            </Box>
 
-          <nav className="ml-6 hidden items-center gap-2 md:flex" aria-label="Navegação principal">
-            {links.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={({ isActive }) =>
-                  `focus-ring rounded-lg px-3 py-2 text-sm font-medium transition ${
-                    isActive ? 'bg-white/10 text-white' : 'text-[#94A3B8] hover:text-white'
-                  }`
-                }
+            <Stack
+              component="nav"
+              direction="row"
+              spacing={{ md: 0.5, lg: 1 }}
+              aria-label="Navegação principal"
+              sx={{ display: { xs: 'none', md: 'flex' }, ml: { md: 1, lg: 2 }, minWidth: 0 }}
+            >
+              {links.map((link) => (
+                <Box
+                  component={NavLink}
+                  key={link.to}
+                  to={link.to}
+                  sx={{
+                    px: { md: 1.25, lg: 1.5 },
+                    py: 1,
+                    borderRadius: 1,
+                    color: 'var(--color-muted)',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                    outline: '2px solid transparent',
+                    outlineOffset: 2,
+                    transition: 'background-color 180ms ease, color 180ms ease',
+                    '&:hover': { color: 'var(--color-text)' },
+                    '&.active': {
+                      bgcolor: 'var(--color-surface-muted)',
+                      color: 'var(--color-text)',
+                    },
+                    '&:focus-visible': { outlineColor: 'var(--color-accent)' },
+                  }}
+                >
+                  {link.label}
+                </Box>
+              ))}
+            </Stack>
+
+            <Stack
+              direction="row"
+              spacing={{ xs: 0.5, sm: 1 }}
+              sx={{ ml: 'auto', minWidth: 0, flexShrink: 0, alignItems: 'center', flex: { lg: 1 }, justifyContent: { lg: 'flex-end' } }}
+            >
+              <Box
+                component="form"
+                onSubmit={submitSearch}
+                sx={{
+                  display: { xs: 'none', lg: 'flex' },
+                  alignItems: 'center',
+                  gap: 1.25,
+                  flex: 1,
+                  maxWidth: { lg: 280, xl: 400 },
+                  minWidth: 0,
+                  border: '1px solid var(--color-border)',
+                  bgcolor: 'color-mix(in srgb, var(--color-surface-solid) 82%, transparent)',
+                  borderRadius: 999,
+                  px: 1.75,
+                  py: 0.75,
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                  transition: 'border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease',
+                  '&:focus-within': {
+                    borderColor: 'var(--color-accent)',
+                    bgcolor: 'var(--color-surface-solid)',
+                    boxShadow: '0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent)',
+                  },
+                }}
               >
-                {link.label}
-              </NavLink>
-            ))}
-          </nav>
+                <SearchRoundedIcon sx={{ fontSize: 19, color: 'var(--color-muted)' }} aria-hidden="true" />
+                <InputBase
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Buscar produtos"
+                  aria-label="Buscar produtos"
+                  sx={{
+                    flex: 1,
+                    color: 'var(--color-text)',
+                    fontSize: '0.875rem',
+                    '& input::placeholder': { color: 'var(--color-muted)', opacity: 1 },
+                  }}
+                />
+              </Box>
 
-          <form onSubmit={submitSearch} className="ml-auto hidden min-w-64 max-w-sm flex-1 items-center gap-2 rounded-lg border border-[#334155] bg-[#1E293B]/70 px-3 py-2 lg:flex">
-            <Search className="h-4 w-4 text-[#94A3B8]" aria-hidden="true" />
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Buscar produtos"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[#94A3B8]"
-              aria-label="Buscar produtos"
-            />
-          </form>
+              <IconButton
+                onClick={toggleMode}
+                aria-label={mode === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'}
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 1,
+                  color: 'var(--color-muted)',
+                  '&:hover': {
+                    bgcolor: 'var(--color-surface-muted)',
+                    color: 'var(--color-text)',
+                  },
+                }}
+              >
+                {mode === 'dark' ? <LightModeRoundedIcon /> : <DarkModeRoundedIcon />}
+              </IconButton>
 
-          <button className="focus-ring relative rounded-lg p-3 hover:bg-white/10" onClick={openCart} aria-label="Abrir carrinho">
-            <ShoppingCart className="h-5 w-5" aria-hidden="true" />
-            {count ? (
-              <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#06D6A0] px-1 text-xs font-bold text-[#0F172A]">
-                {count}
-              </span>
-            ) : null}
-          </button>
+              <IconButton
+                onClick={openCart}
+                aria-label="Abrir carrinho"
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 1,
+                  color: 'var(--color-text)',
+                  '&:hover': { bgcolor: 'var(--color-surface-muted)' },
+                }}
+              >
+                <Badge badgeContent={count || undefined} sx={{ '& .MuiBadge-badge': { bgcolor: 'var(--color-accent)', color: '#fff', fontWeight: 800 } }}>
+                  <ShoppingCartRoundedIcon sx={{ fontSize: 22 }} />
+                </Badge>
+              </IconButton>
 
-          <button className="focus-ring rounded-lg p-3 hover:bg-white/10 md:hidden" onClick={() => setMenuOpen((value) => !value)} aria-label="Abrir menu">
-            {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
-          </button>
-        </div>
+              <IconButton
+                onClick={() => setMenuOpen((value) => !value)}
+                aria-label="Abrir menu"
+                sx={{
+                  display: { md: 'none' },
+                  width: 44,
+                  height: 44,
+                  borderRadius: 1,
+                  color: 'var(--color-text)',
+                  '&:hover': { bgcolor: 'var(--color-surface-muted)' },
+                }}
+              >
+                {menuOpen ? <CloseRoundedIcon /> : <MenuRoundedIcon />}
+              </IconButton>
+            </Stack>
+          </Toolbar>
+        </Container>
 
         {menuOpen ? (
-          <div className="border-t border-white/10 px-4 py-4 md:hidden">
-            <form onSubmit={submitSearch} className="mb-4 flex items-center gap-2 rounded-lg border border-[#334155] bg-[#1E293B]/70 px-3 py-2">
-              <Search className="h-4 w-4 text-[#94A3B8]" aria-hidden="true" />
-              <input
+          <Box sx={{ display: { md: 'none' }, borderTop: '1px solid var(--color-border)', px: 2, py: 2 }}>
+            <Box
+              component="form"
+              onSubmit={submitSearch}
+              sx={{
+                mb: 2,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.25,
+                border: '1px solid var(--color-border)',
+                bgcolor: 'color-mix(in srgb, var(--color-surface-solid) 82%, transparent)',
+                borderRadius: 999,
+                px: 1.75,
+                py: 0.75,
+                '&:focus-within': {
+                  borderColor: 'var(--color-accent)',
+                  boxShadow: '0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent)',
+                },
+              }}
+            >
+              <SearchRoundedIcon sx={{ fontSize: 19, color: 'var(--color-muted)' }} aria-hidden="true" />
+              <InputBase
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Buscar produtos"
-                className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[#94A3B8]"
                 aria-label="Buscar produtos"
+                sx={{ flex: 1, color: 'var(--color-text)', fontSize: '0.875rem' }}
               />
-            </form>
-            <div className="grid gap-2">
+            </Box>
+            <Stack spacing={1}>
               {links.map((link) => (
-                <Button key={link.to} variant="ghost" className="justify-start" onClick={() => setMenuOpen(false)}>
+                <Button key={link.to} variant="ghost" sx={{ justifyContent: 'flex-start' }} onClick={() => setMenuOpen(false)}>
                   <Link to={link.to}>{link.label}</Link>
                 </Button>
               ))}
-            </div>
-          </div>
+            </Stack>
+          </Box>
         ) : null}
-      </header>
+      </AppBar>
 
-      <main>
+      <Box component="main">
         <Outlet />
-      </main>
+      </Box>
 
-      <footer className="border-t border-white/10 px-4 py-8 text-center text-sm text-[#94A3B8]">
+      <Box
+        component="footer"
+        sx={{
+          borderTop: '1px solid var(--color-border)',
+          px: 2,
+          py: 4,
+          textAlign: 'center',
+          color: 'var(--color-muted)',
+          fontSize: '0.875rem',
+        }}
+      >
         © {new Date().getFullYear()} Coreon Marketplace. Powered by Coreon.
-      </footer>
+      </Box>
       <CartDrawer />
-    </div>
+    </Box>
   )
 }
