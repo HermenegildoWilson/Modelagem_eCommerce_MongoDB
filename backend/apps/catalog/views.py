@@ -46,6 +46,7 @@ def api_root(request):
                 "health": "/api/health/",
                 "detalhe_produto": "/api/products/{sku-ou-objectid}/",
                 "query_1_busca_facetada": "/api/products/faceted/",
+                "facetas_produtos": "/api/products/facets/",
                 "query_2_vendas_categoria": "/api/analytics/category-sales/",
                 "query_3_full_text": "/api/search/?q=samsung smartphone android",
                 "query_4_atributos_dinamicos": "/api/products/dynamic-attributes/",
@@ -93,7 +94,7 @@ def faceted_search(request):
                 categoria=params.get("categoria", "Eletrônicos"),
                 min_price=get_float(params, "preco_min", 10000),
                 max_price=get_float(params, "preco_max", 50000),
-                marca=params.get("marca", "Samsung"),
+                marca=params.get("marca") or None,
                 em_stock=get_bool(params, "em_stock", True),
                 rating_min=get_float(params, "rating_min"),
                 page=page,
@@ -112,6 +113,23 @@ def faceted_search(request):
             "limit": limit,
             "total": total,
             "results": serialize_documents(documents),
+        }
+    )
+
+
+@api_view(["GET"])
+def product_facets(request):
+    try:
+        documents, elapsed_ms = with_timing(lambda: services.product_facets(get_collection()))
+    except PyMongoError as e:
+        return mongo_error_response(e)
+
+    return Response(
+        {
+            "query": "Facetas disponíveis para filtros do catálogo",
+            "conceito": "Agregação por categoria e marca para filtros dependentes",
+            "tempo_ms": elapsed_ms,
+            "results": to_jsonable(documents),
         }
     )
 

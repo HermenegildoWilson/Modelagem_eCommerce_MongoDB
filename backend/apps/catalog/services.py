@@ -1,5 +1,7 @@
 """Consultas MongoDB orientadas pelos padrões de acesso do relatório."""
 
+import re
+
 from bson import ObjectId
 from pymongo.collection import Collection
 
@@ -79,6 +81,53 @@ def faceted_search(
     return list(cursor), collection.count_documents(query)
 
 
+def product_facets(collection: Collection) -> list[dict]:
+    return list(
+        collection.aggregate(
+            [
+                {"$match": {"em_stock": True}},
+                {
+                    "$group": {
+                        "_id": {
+                            "categoria": "$categoria",
+                            "marca": "$atributos_dinamicos.marca",
+                        },
+                        "total": {"$sum": 1},
+                    }
+                },
+                {"$sort": {"_id.categoria": 1, "_id.marca": 1}},
+                {
+                    "$group": {
+                        "_id": "$_id.categoria",
+                        "total": {"$sum": "$total"},
+                        "marcas": {
+                            "$push": {
+                                "nome": "$_id.marca",
+                                "total": "$total",
+                            }
+                        },
+                    }
+                },
+                {"$sort": {"_id": 1}},
+                {
+                    "$project": {
+                        "_id": 0,
+                        "categoria": "$_id",
+                        "total": 1,
+                        "marcas": {
+                            "$filter": {
+                                "input": "$marcas",
+                                "as": "marca",
+                                "cond": {"$ne": ["$$marca.nome", None]},
+                            }
+                        },
+                    }
+                },
+            ]
+        )
+    )
+
+
 def category_sales(collection: Collection) -> list[dict]:
     return list(
         collection.aggregate(
@@ -115,7 +164,7 @@ def category_sales(collection: Collection) -> list[dict]:
 def full_text_search(collection: Collection, term: str, limit: int) -> list[dict]:
     projection = dict(PRODUCT_PROJECTION)
     projection["score"] = {"$meta": "textScore"}
-    return list(
+    text_results = list(
         collection.find(
             {"$text": {"$search": term}, "em_stock": True},
             projection,
@@ -123,6 +172,45 @@ def full_text_search(collection: Collection, term: str, limit: int) -> list[dict
         .sort([("score", {"$meta": "textScore"})])
         .limit(limit)
     )
+
+    if len(text_results) >= limit:
+        return text_results
+
+    seen_ids = {item["_id"] for item in text_results}
+    partial_terms = [part for part in re.split(r"\s+", term.strip()) if part]
+    escaped_terms = [re.escape(part) for part in partial_terms]
+    if not escaped_terms:
+        return text_results
+
+    regex_filters = []
+    for escaped_term in escaped_terms:
+        regex = {"$regex": escaped_term, "$options": "i"}
+        regex_filters.extend(
+            [
+                {"nome": regex},
+                {"descricao": regex},
+                {"categoria": regex},
+                {"subcategoria": regex},
+                {"atributos_dinamicos.marca": regex},
+                {"tags": regex},
+            ]
+        )
+
+    remaining = limit - len(text_results)
+    partial_results = list(
+        collection.find(
+            {
+                "_id": {"$nin": list(seen_ids)},
+                "em_stock": True,
+                "$or": regex_filters,
+            },
+            PRODUCT_PROJECTION,
+        )
+        .sort("avaliacao.rating_medio", -1)
+        .limit(remaining)
+    )
+
+    return text_results + partial_results
 
 
 def dynamic_attributes_search(

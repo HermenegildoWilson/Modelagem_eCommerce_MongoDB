@@ -1,5 +1,5 @@
 import { apiClient } from '../client'
-import type { FacetedProductsResponse, Product, SearchResponse } from '../types'
+import type { FacetedProductsResponse, Product, ProductFacetsResponse, SearchResponse } from '../types'
 
 export interface ProductFilters {
   categoria?: string
@@ -25,6 +25,11 @@ export async function getProducts(filters: ProductFilters = {}) {
       limit: filters.limit ?? 12,
     },
   })
+  return response.data
+}
+
+export async function getProductFacets() {
+  const response = await apiClient.get<ProductFacetsResponse>('/products/facets/')
   return response.data
 }
 

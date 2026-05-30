@@ -46,6 +46,24 @@ export interface FacetedProductsResponse {
   results: Product[]
 }
 
+export interface ProductFacetOption {
+  nome: string
+  total: number
+}
+
+export interface ProductCategoryFacet {
+  categoria: string
+  total: number
+  marcas: ProductFacetOption[]
+}
+
+export interface ProductFacetsResponse {
+  query: string
+  conceito: string
+  tempo_ms: number
+  results: ProductCategoryFacet[]
+}
+
 export interface SearchResponse {
   query: string
   conceito: string
