@@ -32,6 +32,7 @@ Opcionalmente configure a conexão no arquivo `.env`:
 MONGODB_URI=mongodb+srv://usuario:senha@cluster0.exemplo.mongodb.net/?appName=Cluster0
 MONGODB_DATABASE=ecommerce
 MONGODB_COLLECTION=produtos
+CORS_ALLOWED_ORIGINS=https://coreonmarket.onrender.com
 ```
 
 ### Executar
