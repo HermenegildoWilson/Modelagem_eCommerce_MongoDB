@@ -150,7 +150,7 @@ export function ProductDetail() {
             sx={{
               mt: 2,
               color: "var(--color-text-soft)",
-              direction: "row",
+              flexDirection: "row",
               alignItems: "center",
             }}
           >

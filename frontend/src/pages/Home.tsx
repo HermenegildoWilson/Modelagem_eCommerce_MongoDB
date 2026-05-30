@@ -169,7 +169,7 @@ export function Home() {
                   <Stack
                     sx={{
                       mt: 2.5,
-                      direction: "row",
+                      flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "space-between",
                     }}
