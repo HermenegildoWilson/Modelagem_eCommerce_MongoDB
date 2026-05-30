@@ -2,9 +2,103 @@
 
 import random
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any, Dict
 
-from eCommerce.backend.seed.categories import CATEGORIAS
+from seed.categories import CATEGORIAS
+
+EXTENSOES_IMAGEM = {".jpg", ".jpeg", ".png", ".webp"}
+PLACEHOLDER_IMAGE_URL = "/images/products/placeholder.jpg"
+PUBLIC_IMAGES_URL = "/images/products"
+FRONTEND_PUBLIC_DIR = Path(__file__).resolve().parents[2] / "frontend" / "public"
+PRODUCT_IMAGES_DIR = FRONTEND_PUBLIC_DIR / "images" / "products"
+
+CATEGORY_IMAGE_FOLDERS = {
+    "eletronicos": "electronics",
+    "electronics": "electronics",
+    "vestuario": "fashion",
+    "fashion": "fashion",
+    "moda": "fashion",
+    "sapatos": "shoes",
+    "shoes": "shoes",
+    "acessorios": "accessories",
+    "accessories": "accessories",
+    "casa e cozinha": "home",
+    "casa": "home",
+    "home": "home",
+    "beleza": "beauty",
+    "beauty": "beauty",
+    "desportos": "sports",
+    "esportes": "sports",
+    "sports": "sports",
+}
+
+
+def normalizar_categoria(categoria: str) -> str:
+    """Normaliza nomes de categorias para chaves previsíveis."""
+    substituicoes = str.maketrans(
+        {
+            "á": "a",
+            "à": "a",
+            "â": "a",
+            "ã": "a",
+            "ä": "a",
+            "é": "e",
+            "ê": "e",
+            "í": "i",
+            "ó": "o",
+            "ô": "o",
+            "õ": "o",
+            "ú": "u",
+            "ç": "c",
+        }
+    )
+    return categoria.strip().lower().translate(substituicoes)
+
+
+def obter_pasta_imagens_categoria(categoria: str) -> Path:
+    """Resolve a pasta local de imagens correspondente a uma categoria."""
+    chave_categoria = normalizar_categoria(categoria)
+    pasta_categoria = CATEGORY_IMAGE_FOLDERS.get(chave_categoria, chave_categoria.replace(" ", "-"))
+    return PRODUCT_IMAGES_DIR / pasta_categoria
+
+
+def listar_imagens_categoria(categoria: str) -> list[str]:
+    """Lista URLs públicas de imagens disponíveis para a categoria informada."""
+    pasta_categoria = obter_pasta_imagens_categoria(categoria)
+    try:
+        if not pasta_categoria.is_dir():
+            return []
+
+        imagens = [
+            arquivo
+            for arquivo in pasta_categoria.iterdir()
+            if arquivo.is_file() and arquivo.suffix.lower() in EXTENSOES_IMAGEM
+        ]
+    except OSError:
+        return []
+
+    pasta_publica = f"{PUBLIC_IMAGES_URL}/{pasta_categoria.name}"
+    return [f"{pasta_publica}/{arquivo.name}" for arquivo in sorted(imagens)]
+
+
+def gerar_imagens_produto(categoria: str) -> list[dict[str, Any]]:
+    """Gera uma galeria de 1 a 4 imagens para um produto."""
+    imagens_disponiveis = listar_imagens_categoria(categoria)
+    if not imagens_disponiveis:
+        imagens_disponiveis = [PLACEHOLDER_IMAGE_URL]
+
+    quantidade = random.randint(1, min(4, len(imagens_disponiveis)))
+    imagens_selecionadas = random.sample(imagens_disponiveis, quantidade)
+
+    return [
+        {
+            "url": url,
+            "tipo": "principal" if indice == 1 else "secundaria",
+            "ordem": indice,
+        }
+        for indice, url in enumerate(imagens_selecionadas, start=1)
+    ]
 
 
 def gerar_sku(categoria: str, subcategoria: str, index: int) -> str:
@@ -121,6 +215,7 @@ def gerar_produto(categoria: str, subcategoria: str, index: int) -> Dict[str, An
     dias_atras = random.randint(0, 730)
     data_criacao = datetime.now() - timedelta(days=dias_atras)
     data_atualizacao = data_criacao + timedelta(hours=random.randint(0, dias_atras * 24))
+    imagens = gerar_imagens_produto(categoria)
 
     return {
         "sku": sku,
@@ -141,13 +236,8 @@ def gerar_produto(categoria: str, subcategoria: str, index: int) -> Dict[str, An
             {"cidade": "Benguela", "quantidade": random.randint(0, estoque // 4)},
             {"cidade": "Huambo", "quantidade": random.randint(0, estoque // 4)},
         ],
-        "imagens": [
-            {
-                "url": f"https://cdn.ecommerce.ao/produtos/{sku}.jpg",
-                "tipo": "principal",
-                "ordem": 1,
-            }
-        ],
+        "imagens": imagens,
+        "imagem_principal": imagens[0]["url"],
         "avaliacao": gerar_avaliacao(),
         "vendas": gerar_vendas(),
         "tags": [
@@ -171,4 +261,3 @@ def gerar_produto(categoria: str, subcategoria: str, index: int) -> Dict[str, An
             "url_amigavel": sku.lower().replace("_", "-"),
         },
     }
-

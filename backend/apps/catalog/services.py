@@ -20,6 +20,7 @@ PRODUCT_PROJECTION = {
     "avaliacao": 1,
     "vendas": 1,
     "imagens": 1,
+    "imagem_principal": 1,
     "tags": 1,
     "info_administrativo": 1,
     "seo": 1,
@@ -227,4 +228,3 @@ def similar_products(collection: Collection, reference_product: dict, limit: int
         .sort("avaliacao.rating_medio", -1)
         .limit(limit)
     )
-

@@ -3,13 +3,13 @@
 import argparse
 import os
 
-from eCommerce.backend.seed.config import (
+from seed.config import (
     DEFAULT_BATCH_SIZE,
     DEFAULT_COLLECTION,
     DEFAULT_DATABASE,
     DEFAULT_MONGO_URI,
 )
-from eCommerce.backend.seed.runner import seed_database
+from seed.runner import seed_database
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -36,4 +36,3 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     seed_database(args.count, args.uri, args.db, args.collection, args.batch_size)
-

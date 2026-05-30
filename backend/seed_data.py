@@ -10,7 +10,7 @@ Uso:
     python seed_data.py --db ecommerce --count 100000
 """
 
-from eCommerce.backend.seed.cli import main
+from seed.cli import main
 
 
 if __name__ == "__main__":

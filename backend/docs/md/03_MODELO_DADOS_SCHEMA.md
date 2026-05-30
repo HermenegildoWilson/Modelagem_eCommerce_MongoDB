@@ -54,16 +54,17 @@
   
   "imagens": [
     {
-      "url": "https://cdn.ecommerce.ao/produtos/ELE-SAMSUNG-A50-001.jpg",
+      "url": "/images/products/electronics/12.jpg",
       "tipo": "principal",
       "ordem": 1
     },
     {
-      "url": "https://cdn.ecommerce.ao/produtos/ELE-SAMSUNG-A50-002.jpg",
+      "url": "/images/products/electronics/7.jpg",
       "tipo": "secundaria",
       "ordem": 2
     }
   ],
+  "imagem_principal": "/images/products/electronics/12.jpg",
   
   "avaliacao": {
     "rating_medio": 4.5,
@@ -149,11 +150,12 @@
   
   "imagens": [
     {
-      "url": "https://cdn.ecommerce.ao/produtos/VEST-NIKE-TSHIRT-001.jpg",
+      "url": "/images/products/fashion/18.jpg",
       "tipo": "principal",
       "ordem": 1
     }
   ],
+  "imagem_principal": "/images/products/fashion/18.jpg",
   
   "avaliacao": {
     "rating_medio": 4.2,
@@ -239,11 +241,12 @@
   
   "imagens": [
     {
-      "url": "https://cdn.ecommerce.ao/produtos/LIVRO-PESSOA-001.jpg",
-      "tipo": "capa",
+      "url": "/images/products/placeholder.jpg",
+      "tipo": "principal",
       "ordem": 1
     }
   ],
+  "imagem_principal": "/images/products/placeholder.jpg",
   
   "avaliacao": {
     "rating_medio": 4.7,

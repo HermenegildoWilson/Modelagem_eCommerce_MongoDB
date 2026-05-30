@@ -5,9 +5,9 @@ import time
 
 from pymongo.errors import PyMongoError
 
-from eCommerce.backend.seed.categories import CATEGORIAS
-from eCommerce.backend.seed.generator import gerar_produto
-from eCommerce.backend.seed.mongo import conectar, criar_indices, inserir_batch, mascarar_uri
+from seed.categories import CATEGORIAS
+from seed.generator import gerar_produto
+from seed.mongo import conectar, criar_indices, inserir_batch, mascarar_uri
 
 
 def distribuir_por_categoria(count: int) -> dict:
@@ -117,4 +117,3 @@ def seed_database(
 
     if client:
         client.close()
-

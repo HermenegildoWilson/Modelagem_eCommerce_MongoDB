@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from eCommerce.backend.apps.catalog import views
+from apps.catalog import views
 
 urlpatterns = [
     path("", views.api_root, name="api-root"),

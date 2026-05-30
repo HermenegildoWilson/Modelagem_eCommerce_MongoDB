@@ -7,10 +7,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from eCommerce.backend.apps.catalog import services
-from eCommerce.backend.apps.catalog.mongo import get_client, get_collection
-from eCommerce.backend.apps.catalog.query_params import get_bool, get_csv, get_float, get_int
-from eCommerce.backend.apps.catalog.serializers import serialize_document, serialize_documents, to_jsonable
+from apps.catalog import services
+from apps.catalog.mongo import get_client, get_collection
+from apps.catalog.query_params import get_bool, get_csv, get_float, get_int
+from apps.catalog.serializers import serialize_document, serialize_documents, to_jsonable
 
 
 def with_timing(callback):
