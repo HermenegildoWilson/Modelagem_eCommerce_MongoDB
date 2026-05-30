@@ -66,10 +66,10 @@ export function ProductCard({ product }: ProductCardProps) {
         </Box>
       </Box>
 
-      <Stack spacing={2} sx={{ p: 2 }}>
+      <Stack spacing={0} sx={{ p: 2 }}>
         <Stack
           sx={{
-            direction: "row",
+            flexDirection: "row",
             alignItems: "flex-start",
             justifyContent: "space-between",
           }}
@@ -122,7 +122,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <Stack
           sx={{
-            direction: "row",
+            flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
             spacing: 1.5,
@@ -152,7 +152,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </Box>
           <Stack
             sx={{
-              direction: "row",
+              flexDirection: "row",
               alignItems: "center",
               color: "var(--color-text-soft)",
               fontSize: "0.875rem",

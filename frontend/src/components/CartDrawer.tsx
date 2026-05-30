@@ -66,7 +66,7 @@ export function CartDrawer() {
                 p: 2.5,
                 borderBottom: "1px solid var(--color-border-strong)",
                 component: "header",
-                direction: "row",
+                flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
               }}
@@ -176,14 +176,14 @@ export function CartDrawer() {
                     <Stack
                       sx={{
                         mt: 1.5,
-                        direction: "row",
+                        flexDirection: "row",
                         alignItems: "center",
                         justifyContent: "space-between",
                       }}
                     >
                       <Stack
                         sx={{
-                          direction: "row",
+                          flexDirection: "row",
                           alignItems: "center",
                           border: "1px solid var(--color-border-strong)",
                           borderRadius: 1,
@@ -248,7 +248,7 @@ export function CartDrawer() {
                   mb: 2,
                   fontSize: "1.125rem",
                   fontWeight: 700,
-                  direction: "row",
+                  flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
                 }}

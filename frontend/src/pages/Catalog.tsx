@@ -175,15 +175,15 @@ export function Catalog() {
   };
 
   return (
-    <Container maxWidth="xl" component="section" sx={{ py: 5 }}>
+    <Container maxWidth="xl" component="section" sx={{ py: 2 }}>
       <Stack
         spacing={2}
-        sx={{ 
+        sx={{
           mb: 3,
           justifyContent: "space-between",
-          direction: {xs: "column", lg: "row"},
-          alignItems: {lg: "flex-end"},
-         }}
+          flexDirection: { xs: "column", lg: "row" },
+          alignItems: { lg: "flex-end" },
+        }}
       >
         <Box>
           <Typography
@@ -208,11 +208,11 @@ export function Catalog() {
             {search ? `Resultados para "${search}"` : "Produtos em destaque"}
           </Typography>
           <Typography sx={{ mt: 1, color: "var(--color-muted)" }}>
-            {total} produtos encontrados na API.
+            {total} produtos encontrados.
           </Typography>
         </Box>
         <Stack
-          sx={{ direction: "row", flexWrap: "wrap", alignItems: "center" }}
+          sx={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center" }}
           useFlexGap
           spacing={1}
         >
@@ -289,7 +289,7 @@ export function Catalog() {
           <Stack
             sx={{
               mb: 2,
-              direction: "row",
+              flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
             }}
@@ -366,7 +366,7 @@ export function Catalog() {
               <Stack
                 sx={{
                   mb: 1,
-                  direction: "row",
+                  flexDirection: "row",
                   justifyContent: "space-between",
                 }}
               >
@@ -418,7 +418,7 @@ export function Catalog() {
             gap: 2.5,
             gridTemplateColumns: {
               sm: "repeat(2, minmax(0, 1fr))",
-              xl: "repeat(3, minmax(0, 1fr))",
+              md: "repeat(4, minmax(0, 1fr))",
             },
           }}
         >

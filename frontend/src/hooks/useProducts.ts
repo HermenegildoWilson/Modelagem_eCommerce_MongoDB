@@ -29,7 +29,7 @@ export function useProducts(filters: ProductFilters & { search?: string }) {
         }
       } catch {
         if (!controller.signal.aborted) {
-          setError('Não foi possível carregar os produtos. Confirma se o Django está rodando.')
+          setError('Não foi possível carregar os produtos. Confirma a conexão om a API.')
         }
       } finally {
         if (!controller.signal.aborted) {
