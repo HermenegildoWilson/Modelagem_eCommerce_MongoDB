@@ -23,3 +23,20 @@ rad.json
 TestResults.xml
 .agents
 .codex
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ambientes e segredos locais
+.env
+.venv/
+venv/
+
+# Django/local runtime
+db.sqlite3
+staticfiles/
+
+# Sistema/editores
+.DS_Store

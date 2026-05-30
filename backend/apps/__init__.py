@@ -1,0 +1,2 @@
+"""Aplicações Django do projeto."""
+
